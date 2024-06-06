@@ -1,0 +1,100 @@
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f4f4f4;
+  margin: 0;
+  padding: 0;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: #dad8d9;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  border: 2px solid #ff6600;
+}
+
+.content {
+  text-align: center;
+  padding: 20px;
+}
+
+.logo {
+  max-width: 150px;
+  margin-bottom: 20px;
+}
+
+.user-info {
+  margin-bottom: 30px;
+}
+
+.user-info h1 {
+  margin: 0;
+  font-size: 2em;
+  color: #333;
+}
+
+.user-info p {
+  font-size: 1.2em;
+  color: #666;
+}
+
+.bets {
+  margin-top: 20px;
+  text-align: left;
+}
+
+.bets h2 {
+  font-size: 22px;
+  margin-bottom: 10px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+}
+
+table,
+th,
+td {
+  border: 1px solid #ddd;
+}
+
+th,
+td {
+  padding: 10px;
+  text-align: left;
+}
+
+th {
+  background-color: #f2f2f2;
+}
+
+tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+select,
+input[type="number"] {
+  padding: 5px;
+  margin-right: 10px;
+}
+
+.bet-button {
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 14px;
+  margin: 4px 2px;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+.bet-button:hover {
+  background-color: #45a049;
+}
