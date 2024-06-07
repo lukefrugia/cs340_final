@@ -30,21 +30,56 @@ async function main() {
 
   var apiInstance = new cfb.TeamsApi();
 
-  console.log("INSERT INTO `TEAM` (team_id, city, name, league_id) VALUES");
-
   var id = 0;
+  let ids = [];
+  let conferences = [
+    "ACC",
+    "American Athletic",
+    "Big 12",
+    "Big Ten",
+    "Conference USA",
+    "FBS Independents",
+    "Mid-American",
+    "Mountain West",
+    "Pac-12",
+  ];
   var opts = {
     year: 2024, // Number | Year filter
   };
-  await apiInstance.getFbsTeams(opts).then(
+
+  console.log("INSERT INTO `LEAGUE` (league_id, name, sport) VALUES");
+
+  conferences.forEach((conference) => {
+    id += 1;
+    console.log("(" + id + ", '" + conference + "', 'Football'), ");
+  });
+
+  i = 0;
+
+  console.log("INSERT INTO `TEAM` (team_id, city, name, league_id) VALUES");
+
+  await apiInstance.getTeams(opts).then(
     async function (data) {
       const jsonData = JSON.stringify(data, null, 2);
       const teamData = JSON.parse(jsonData);
       teamData.forEach((team) => {
-        console.log(
-          "(" + team.id + ", '" + team.school + "', '" + team.mascot,
-          "', 1),"
-        );
+        if (team.id < 3000) {
+          const check = conferences.indexOf(team.conference);
+          if (check != -1) {
+            ids.push(team.id);
+            console.log(
+              "(" +
+                team.id +
+                ", '" +
+                team.school +
+                "', '" +
+                team.mascot +
+                "', " +
+                (check + 1) +
+                "),"
+            );
+          }
+        }
       });
 
       console.log(
@@ -69,13 +104,31 @@ async function main() {
           const gameData = JSON.parse(jsonData);
           gameData.forEach((game) => {
             const date = formatStartDate(game.startDate);
-            id += 1;
 
-            console.log(
-              "(" + id + ", '" + date + "', " + game.homeId,
-              ", " + game.awayId,
-              "),  -- " + game.homeTeam + " vs. " + game.awayTeam
-            );
+            // I know this is the worst way to do this. I'm lazy
+            ids.forEach((i) => {
+              if (i === game.awayId) {
+                ids.forEach((i) => {
+                  if (i === game.homeId) {
+                    id += 1;
+                    console.log(
+                      "(" +
+                        id +
+                        ", '" +
+                        date +
+                        "', " +
+                        game.homeId +
+                        ", " +
+                        game.awayId +
+                        "),  -- " +
+                        game.homeTeam +
+                        " vs. " +
+                        game.awayTeam
+                    );
+                  }
+                });
+              }
+            });
           });
         },
         function (error) {
