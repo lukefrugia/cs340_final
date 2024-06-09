@@ -98,3 +98,40 @@ input[type="number"] {
 .bet-button:hover {
   background-color: #45a049;
 }
+
+#sort-by {
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: center;
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+#sort-by h2 {
+  margin: 0;
+  margin-right: 20px;
+  font-size: 1.5em;
+  color: #333;
+}
+
+#sort-by button {
+  background-color: #636363;
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  font-size: 1em;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  margin-right: 16px;
+}
+
+#sort-by button:hover {
+  background-color: #323232;
+}
+
+#sort-by button:focus {
+  outline: none;
+}

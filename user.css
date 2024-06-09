@@ -85,3 +85,18 @@ th {
 tr:nth-child(even) {
   background-color: #f9f9f9;
 }
+
+td > form > button {
+  background-color: #007BFF;
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  font-size: 1em;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+td > form > button:hover {
+  background-color: #0056b3;
+}
