@@ -41,15 +41,15 @@ if (isset($_GET['username'])) {
       $url = "bets.php?user_id=" . urlencode($user_id);
 
       // Fetch user bets
-      $upcoming_bets_query = "SELECT bet_id, bet_type, bet_date, bet_amount, payout, odds_id, B.game_id
+      $upcoming_bets_query = "SELECT bet_id, bet_type, bet_date, bet_amount, payout, odds_id
                               FROM BETS_ON B
-                              JOIN GAME G ON B.game_id = G.game_id
+                              JOIN GAME G ON B.odds_id = G.game_id
                               WHERE user_id = '{$user_id}'
                               AND G.winning_team_id IS NULL";
 
-        $past_bets_query = "SELECT bet_id, bet_type, bet_date, bet_amount, payout, odds_id, B.game_id, G.winning_team_id, home_team_id, away_team_id
+        $past_bets_query = "SELECT bet_id, bet_type, bet_date, bet_amount, payout, odds_id, G.winning_team_id, home_team_id, away_team_id
                             FROM BETS_ON B
-                            JOIN GAME G ON B.game_id = G.game_id
+                            JOIN GAME G ON B.odds_id = G.game_id
                             WHERE user_id = '{$user_id}'
                             AND G.winning_team_id IS NOT NULL";
 
@@ -126,7 +126,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['double-down'])) {
 
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['simulate'])) {
     $odds_id = $_POST['odds_id'];
-    $game_id = $_POST['game_id'];
+    $game_id = $_POST['odds_id'];
 
     $odds_query = " SELECT home_win_odds, away_win_odds
                     FROM ODDS
@@ -228,7 +228,6 @@ mysqli_close($link);
                     <td>
                         <form id="simulate" style="display: flex; justify-content: center; align-items: center;" method="POST" action="">
                             <input type="hidden" name="bet_id" value="<?php echo $bet['bet_id']; ?>">
-                            <input type="hidden" name="game_id" value="<?php echo $bet['game_id']; ?>">
                             <input type="hidden" name="odds_id" value="<?php echo $bet['odds_id']; ?>">
                             <button type="submit" name="simulate">Simulate</button>
                         </form>
