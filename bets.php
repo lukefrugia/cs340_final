@@ -94,8 +94,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['bet'])) {
         $payout = ($bet_type == 'home_win') ? $bet_amount * $odds_row['home_win_odds'] : $bet_amount * $odds_row['away_win_odds'];
 
         // Insert bet into BETS_ON table
-        $insert_sql = "INSERT INTO BETS_ON (bet_type, bet_date, bet_amount, payout, user_id, odds_id, game_id) 
-                    VALUES ('$bet_type', '$bet_date', '$bet_amount', '$payout', '$user_id', '$game_id', '$game_id')";
+        $insert_sql = "INSERT INTO BETS_ON (bet_type, bet_date, bet_amount, payout, user_id, odds_id) 
+                    VALUES ('$bet_type', '$bet_date', '$bet_amount', '$payout', '$user_id', '$game_id')";
 
         if (mysqli_query($link, $insert_sql)) {
             echo "Bet placed successfully!";
