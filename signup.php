@@ -51,7 +51,7 @@ mysqli_close($link);
         <label for="username">Username:</label>
         <input type="text" id="username" name="username" required>
         <label for="balance">Initial Balance:</label>
-        <input type="number" id="username" name="username" required>
+        <input type="number" id="balance" name="balance" required>
         <input type="submit" value="Create Account">
     </form>
 </div>
