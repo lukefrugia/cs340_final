@@ -46,7 +46,8 @@ if (isset($_GET['user_id'])) {
                         JOIN TEAM AT ON G.away_team_id = AT.team_id
                         JOIN ODDS O ON G.game_id = O.odds_id
                         JOIN LEAGUE L ON HT.league_id = L.league_id
-                        WHERE G.game_date > CURDATE()";
+                        WHERE G.game_date > CURDATE()
+                        AND G.winning_team_id IS NULL";
 
     if (isset($_GET['sortby'])){
         switch($_GET['sortby']){
@@ -66,7 +67,7 @@ if (isset($_GET['user_id'])) {
                 break;
             }
         }
-        $games_query = $games_query . "" . $sort_query;
+        $games_query = $games_query . " " . $sort_query;
     }
                         
         $games_result = mysqli_query($link, $games_query);
@@ -91,8 +92,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['bet'])) {
     $payout = ($bet_type == 'home_win') ? $bet_amount * $odds_row['home_win_odds'] : $bet_amount * $odds_row['away_win_odds'];
 
     // Insert bet into BETS_ON table
-    $insert_sql = "INSERT INTO BETS_ON (bet_type, bet_date, bet_amount, payout, user_id, odds_id) 
-                   VALUES ('$bet_type', '$bet_date', '$bet_amount', '$payout', '$user_id', '$game_id')";
+    $insert_sql = "INSERT INTO BETS_ON (bet_type, bet_date, bet_amount, payout, user_id, odds_id, game_id) 
+                   VALUES ('$bet_type', '$bet_date', '$bet_amount', '$payout', '$user_id', '$game_id', '$game_id')";
 
     if (mysqli_query($link, $insert_sql)) {
         echo "Bet placed successfully!";
@@ -151,6 +152,9 @@ mysqli_close($link);
             <button type="submit" name="sort-method" value="by-date">Date</button>
             <button type="submit" name="sort-method" value="by-league">League</button>
             <button type="submit" name="sort-method" value="by-team">Team</button>
+        </form>
+        <form id="sort-by" method="POST" action="">
+                <button type="submit" name="admin">Add the shit!</button>
         </form>
         <?php if (isset($games_result) && mysqli_num_rows($games_result) > 0) { ?>
         <table border="1">
