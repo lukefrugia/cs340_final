@@ -38,8 +38,7 @@ label {
   color: #333;
 }
 
-input[type="text"],
-input[type="password"] {
+input {
   padding: 10px;
   margin-bottom: 20px;
   border: 1px solid #ddd;

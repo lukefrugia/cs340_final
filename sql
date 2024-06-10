@@ -1355,3 +1355,37 @@ BEGIN
 END //
 
 DELIMITER ;
+
+DELIMITER //
+
+CREATE PROCEDURE payout_bets(IN _game_id INT)
+BEGIN
+      DECLARE winner_id INT;
+      DECLARE home_team_id INT;
+      DECLARE away_team_id INT;
+    
+      SELECT winning_team_id, home_team_id, away_team_id 
+      INTO winner_id, home_team_id, away_team_id 
+      FROM GAME
+      WHERE game_id = _game_id;
+    
+      UPDATE USER U
+      JOIN BETS_ON B ON U.user_id = B.user_id
+      SET U.balance = U.balance + B.payout
+      WHERE B.game_id = _game_id 
+      AND ((B.bet_type = 'Home Win' AND winner_id = home_team_id)
+      OR   (B.bet_type = 'Away Win' AND winner_id = away_team_id));
+    END //
+
+DELIMETER ;
+
+DELIMITER //
+
+CREATE TRIGGER after_winner_id_update
+AFTER UPDATE ON GAME
+FOR EACH ROW
+BEGIN
+   CALL pay_out_bets(NEW.game_id);
+END //
+
+DELIMITER ;
