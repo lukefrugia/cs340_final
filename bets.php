@@ -18,6 +18,7 @@ define('DB_NAME', 'cs340_frugial');
 $url;
 $sort_query;
 $league_name;
+$balance;
 
 $link = mysqli_connect(DB_SERVER, DB_USERNAME, DB_PASSWORD, DB_NAME);
 
@@ -46,8 +47,8 @@ if (isset($_GET['user_id'])) {
                         JOIN TEAM AT ON G.away_team_id = AT.team_id
                         JOIN ODDS O ON G.game_id = O.odds_id
                         JOIN LEAGUE L ON HT.league_id = L.league_id
-                        WHERE G.game_date > CURDATE()
-                        AND G.winning_team_id IS NULL";
+                        WHERE (G.game_date > CURDATE()
+                        AND G.winning_team_id IS NULL)";
 
     if (isset($_GET['sortby'])){
         switch($_GET['sortby']){
@@ -84,22 +85,35 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['bet'])) {
     $bet_amount = mysqli_real_escape_string($link, $_POST['bet_amount']);
     $bet_date = date('Y-m-d');
 
-    // Fetch odds for the selected game
-    $odds_sql = "SELECT home_win_odds, away_win_odds FROM ODDS WHERE odds_id = '$game_id'";
-    $odds_result = mysqli_query($link, $odds_sql);
-    $odds_row = mysqli_fetch_assoc($odds_result);
+    if ($bet_amount > 0 && $bet_amount <= $balance){
+        // Fetch odds for the selected game
+        $odds_sql = "SELECT home_win_odds, away_win_odds FROM ODDS WHERE odds_id = '$game_id'";
+        $odds_result = mysqli_query($link, $odds_sql);
+        $odds_row = mysqli_fetch_assoc($odds_result);
 
-    $payout = ($bet_type == 'home_win') ? $bet_amount * $odds_row['home_win_odds'] : $bet_amount * $odds_row['away_win_odds'];
+        $payout = ($bet_type == 'home_win') ? $bet_amount * $odds_row['home_win_odds'] : $bet_amount * $odds_row['away_win_odds'];
 
-    // Insert bet into BETS_ON table
-    $insert_sql = "INSERT INTO BETS_ON (bet_type, bet_date, bet_amount, payout, user_id, odds_id, game_id) 
-                   VALUES ('$bet_type', '$bet_date', '$bet_amount', '$payout', '$user_id', '$game_id', '$game_id')";
+        // Insert bet into BETS_ON table
+        $insert_sql = "INSERT INTO BETS_ON (bet_type, bet_date, bet_amount, payout, user_id, odds_id, game_id) 
+                    VALUES ('$bet_type', '$bet_date', '$bet_amount', '$payout', '$user_id', '$game_id', '$game_id')";
 
-    if (mysqli_query($link, $insert_sql)) {
-        echo "Bet placed successfully!";
-    } else {
-        echo "ERROR: Could not place bet. " . mysqli_error($link);
+        if (mysqli_query($link, $insert_sql)) {
+            echo "Bet placed successfully!";
+        } else {
+            echo "ERROR: Could not place bet. " . mysqli_error($link);
+        }
+
+        $redirect_url = "bets.php?user_id={$_GET['user_id']}"; 
+        header("Location: $redirect_url");
+        exit();
     }
+    else if($bet_amount <= 0){
+        echo "Please bet a valid amount of money.";
+    }
+    else
+        echo "You do not have enough money to place this bet.";
+
+    
 }
 
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['sort-method'])) {
@@ -152,9 +166,6 @@ mysqli_close($link);
             <button type="submit" name="sort-method" value="by-date">Date</button>
             <button type="submit" name="sort-method" value="by-league">League</button>
             <button type="submit" name="sort-method" value="by-team">Team</button>
-        </form>
-        <form id="sort-by" method="POST" action="">
-                <button type="submit" name="admin">Add the shit!</button>
         </form>
         <?php if (isset($games_result) && mysqli_num_rows($games_result) > 0) { ?>
         <table border="1">

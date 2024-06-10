@@ -119,59 +119,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['double-down'])) {
             exit();
         }
 
-        $redirect_url = "user.php?username={$_GET['username']}"; 
-
-        header("Location: $redirect_url");
-        exit();
-    }
-}
-
-if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['double-down'])) {
-    $bet_id = $_POST['bet_id'];
-
-    $user_query = " SELECT U.balance, B.bet_amount
-                    FROM USER U
-                    JOIN BETS_ON B ON U.user_id = B.user_id
-                    WHERE U.user_name = '{$_GET['username']}' AND B.bet_id = $bet_id";
-
-    $result = mysqli_query($link, $user_query);
-    $result = mysqli_fetch_assoc($result);
-    $balance = $result['balance'];
-    $bet_amount = $result['bet_amount'];
-
-    if ($balance - $bet_amount < 0){
-        echo "You do not have enough money to double down.";
-    }
-    else{
-        $update_bet_query = "UPDATE BETS_ON B
-                     JOIN ODDS O ON B.odds_id = O.odds_id
-                     SET B.bet_amount = B.bet_amount * 2,
-                         B.payout = CASE B.bet_type
-                                    WHEN 'home_win' THEN (B.bet_amount * 2) * O.home_win_odds
-                                    WHEN 'away_win' THEN (B.bet_amount * 2) * O.away_win_odds
-                                    END
-                     WHERE bet_id = {$bet_id}";
-
-        $update_balance_query = "UPDATE USER
-                                 SET balance = balance - $bet_amount
-                                 WHERE user_name = '{$_GET['username']}'";
-
-        $correct_error_query = "UPDATE USER
-                                SET balance = balance + $bet_amount
-                                WHERE user_name = '{$_GET['username']}'";
-
-        if (!mysqli_query($link, $update_balance_query)){
-            echo "ERROR: Could not update balance. " . mysqli_error($link);
-            exit();
-        }
-
-        if (!mysqli_query($link, $update_bet_query)){
-            echo "ERROR: Could not place bet. " . mysqli_error($link);
-
-            while (!mysqli_query($link, $correct_error_query)) {}
-            exit();
-        }
-
         header("Location: $redirect_url");
         exit();
     }
@@ -211,10 +158,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['simulate'])) {
                      SET winning_team_id = {$winner_id}
                      WHERE game_id = {$game_id};";
 
+    // echo $update_query;
+    // exit();
+
     if (!mysqli_query($link, $update_query)){
         echo "ERROR: Could not update game id. " . mysqli_error($link);
         exit();
     }
+
+    header("Location: $redirect_url");
+    exit();
 
 }
 
