@@ -114,3 +114,11 @@ button {
 #simulate button:hover {
   background-color: #45A049;
 }
+
+#delete-bet button{
+  background-color: #C0392B;
+}
+
+#delete-bet button:hover {
+  background-color: #A93226;
+}

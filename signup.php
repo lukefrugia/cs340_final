@@ -25,21 +25,28 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $username = mysqli_real_escape_string($link, $_POST['username']);
     $balance = mysqli_real_escape_string($link, $_POST['balance']);
 
-    $check_query = "SELECT user_name FROM USER WHERE user_name = '$username'";
-    $check_result = mysqli_query($link, $check_query);
+    if ($balance > 0){
 
-    if (mysqli_num_rows($check_result) > 0) {
-        $error = "Username already exists. Please choose another.";
-    } else {
-        $query = "INSERT INTO USER (user_name, balance) VALUES ('$username', '$balance')";
-        if (mysqli_query($link, $query)) {
-            header("Location: user.php?username=" . urlencode($username));
-            exit();
+        $check_query = "SELECT user_name FROM USER WHERE user_name = '$username'";
+        $check_result = mysqli_query($link, $check_query);
+
+        if (mysqli_num_rows($check_result) > 0) {
+            $error = "Username already exists. Please choose another.";
         } else {
-            $error = "ERROR: Could not execute $query. " . mysqli_error($link);
+            $query = "INSERT INTO USER (user_name, balance) VALUES ('$username', '$balance')";
+            if (mysqli_query($link, $query)) {
+                header("Location: user.php?username=" . urlencode($username));
+                exit();
+            } else {
+                $error = "ERROR: Could not execute $query. " . mysqli_error($link);
+            }
         }
-    }
+    }else
+        $error = "Please enter a non-zero positive number.";
+
 }
+
+    
 
 mysqli_close($link);
 ?>

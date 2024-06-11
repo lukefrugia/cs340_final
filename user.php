@@ -171,6 +171,22 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['simulate'])) {
 
 }
 
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['delete-bet'])) {
+    $bet_id = $_POST['bet_id'];
+
+    $delete_query = "DELETE FROM BETS_ON
+                     WHERE bet_id = {$bet_id};";
+
+    if (!mysqli_query($link, $delete_query)){
+        echo "ERROR: Could not delete game. " . mysqli_error($link);
+        exit();
+    }
+
+    header("Location: $redirect_url");
+    exit();
+
+}
+
 mysqli_close($link);
 ?>
 
@@ -250,6 +266,7 @@ mysqli_close($link);
                     <th>Bet Date</th>
                     <th>Bet Amount</th>
                     <th>Payout</th>
+                    <th></th>
                     
                 </tr>
             </thead>
@@ -269,6 +286,13 @@ mysqli_close($link);
                     <td><?php echo htmlspecialchars($bet['bet_date']); ?></td>        
                     <td>$<?php echo htmlspecialchars(number_format($bet['bet_amount'], 2)); ?></td>
                     <td>$<?php echo htmlspecialchars(number_format($bet['payout'], 2)); ?></td>
+                    <td>
+                    <form id="delete-bet" style="display: flex; justify-content: center; align-items: center;" method="POST" action="">
+                            <input type="hidden" name="bet_id" value="<?php echo $bet['bet_id']; ?>">
+                            <button type="submit" name="delete-bet">Delete Bet</button>
+                        </form>
+                    </td>
+                    </td>
                 </tr>
                 <?php } ?>
             </tbody>
